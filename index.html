@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENSIJAM | Elevated Business Excellence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;500;600&family=Instrument+Serif:ital@0;1&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #C9A962;
+            --gold-light: #E6D5AC;
+            --dark: #0A0A0A;
+            --dark-soft: #141414;
+            --light-bg: #eae8e4;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(201, 169, 98, 0.2);
+        }
+
+        body {
+            width: 100%;
+            background-color: var(--dark);
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* --- LOADER --- */
+        .loader-wrapper {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--dark);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .loader-content { width: 300px; text-align: center; }
+        .loader-line-bg { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 20px; position: relative; }
+        .loader-line-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--gold); }
+        .loader-counter { font-family: 'Instrument Serif', serif; font-size: 3rem; color: var(--gold); font-style: italic; }
+        .loader-brand { font-size: 0.6rem; letter-spacing: 5px; text-transform: uppercase; margin-top: 10px; opacity: 0.6; }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 2.5rem 5%; z-index: 9600; opacity: 0;
+            mix-blend-mode: difference;
+        }
+        .logo { font-weight: 300; font-size: 1.1rem; letter-spacing: 8px; text-transform: uppercase; color: white; }
+        .menu-toggle { cursor: pointer; display: flex; align-items: center; gap: 12px; }
+        .menu-text { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; min-width: 70px; text-align: right; color: white; }
+        .hamburger { width: 28px; height: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+        .line { width: 100%; height: 1.5px; background: white; transition: 0.4s; }
+        .is-active .line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .is-active .line:nth-child(2) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* --- CURSOR --- */
+        .cursor {
+            width: 20px; height: 20px; border: 1px solid var(--gold); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 10000;
+            transition: transform 0.2s ease; mix-blend-mode: difference;
+        }
+
+        /* --- HERO --- */
+        .hero { position: relative; width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .hero-bg { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; }
+        .hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.3); }
+        .hero-content { z-index: 5; text-align: center; }
+        #title { font-size: clamp(3rem, 10vw, 8rem); font-family: 'Playfair Display', serif; line-height: 1.1; letter-spacing: -2px; }
+        .title-highlight { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* --- GLASS MARQUEE --- */
+        .marquee-container {
+            position: absolute; bottom: 8%; width: 100%; z-index: 10;
+            overflow: hidden; padding: 1.5rem 0; background: var(--glass);
+            backdrop-filter: blur(15px); border-top: 1px solid var(--glass-border);
+            opacity: 0;
+        }
+        .marquee-content { display: flex; white-space: nowrap; gap: 4rem; animation: marquee 30s linear infinite; }
+        .marquee-item { display: flex; align-items: center; gap: 1.5rem; font-family: 'Playfair Display', serif; font-size: 1.3rem; letter-spacing: 4px; color: white; }
+        .marquee-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- INTRO --- */
+        .intro {
+            height: 100vh; width: 100vw;
+            display: flex; justify-content: center; align-items: center;
+            background: var(--light-bg); padding: 0 10%;
+            position: relative; z-index: 2;
+        }
+        .text-reveal-wrapper { position: relative; width: 100%; max-width: 900px; }
+        .block-reveal {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(1.8rem, 4.5vw, 3.8rem);
+            line-height: 1.3; color: #1a1a1a;
+            position: relative; overflow: hidden;
+            display: block; opacity: 0; transform: translateY(20px);
+        }
+        .block-reveal-box {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--gold); transform: scaleX(0);
+            transform-origin: left; z-index: 3;
+        }
+
+        /* --- HORIZONTAL SCROLL --- */
+        .wrapper-404 { position: relative; width: 100%; height: 100vh; background-color: var(--dark-soft); overflow: hidden; }
+        .wrapper-404-inner {
+            position: absolute; top: 0; left: 0; height: 100vh;
+            display: flex; align-items: center; gap: 8vw; padding-left: 10vw; will-change: transform;
+        }
+        .experiences-title {
+            position: absolute; top: 8vh; left: 8vw; font-size: clamp(2rem, 4vw, 3.5rem);
+            font-family: 'Playfair Display', serif; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); z-index: 10;
+        }
+        .card {
+            position: relative; min-width: 35vw; height: 70vh; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4); transition: transform 0.3s ease; cursor: pointer;
+        }
+        .card:hover { transform: scale(1.02); }
+        .card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: 0.4s ease; }
+        .card:hover img { filter: brightness(0.5); transform: scale(1.05); }
+        .card-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); z-index: 5; }
+        .card-number { font-family: 'Instrument Serif', serif; font-size: 1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 2px; }
+        .card-title { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 2.5vw, 2rem); color: white; margin-bottom: 15px; font-weight: 500; }
+        .card-description { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6; font-weight: 300; }
+
+        /* --- STACKING CARDS --- */
+        .pin-card-wrapper { background: #fff; }
+        .pin-card {
+            position: relative; display: flex; padding: 8vh 8vw;
+            justify-content: space-between; background: #ffffff;
+            border-top: 1px solid #eee; perspective: 1500px;
+            height: 100vh; width: 100vw; color: #1a1a1a;
+        }
+        .pin-card .overlay { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 10; }
+        .pin-card span { font-size: 3.5vw; font-family: 'Playfair Display', serif; color: var(--gold); margin-top: 10px; }
+        .pin-card-content { width: 75%; display: flex; flex-direction: column; align-items: flex-start; z-index: 5; }
+        .pin-card h2 { font-family: 'Playfair Display', serif; font-size: 3.5vw; font-weight: 500; margin-bottom: 1.5rem; color: #1a1a1a; letter-spacing: -1px; }
+        .pin-card img { width: 100%; height: 50vh; object-fit: cover; }
+        .pin-card .card-desc { margin-top: 1.5rem; width: 60%; font-size: 0.95rem; line-height: 1.6; color: #555; }
+
+        /* --- TICKER SECTION (RESTORED LOGIC) --- */
+        .ticker-section { background-color: var(--dark); padding: 15vh 0; display: flex; flex-direction: column; justify-content: center; gap: 40px; overflow: hidden; z-index: 5; }
+        .ticker { padding: 1.5vw 0; white-space: nowrap; width: 100%; }
+        .ticker:first-child { background-color: var(--gold); transform: rotateZ(-1.5deg) scale(1.05); }
+        .ticker:last-child { background-color: var(--dark-soft); border-top: 1px solid rgba(201, 169, 98, 0.3); border-bottom: 1px solid rgba(201, 169, 98, 0.3); transform: rotateZ(1.5deg) scale(1.05); }
+        .ticker-wrap { display: flex; gap: 30px; }
+        .ticker-text { color: #000; font-family: 'Playfair Display', serif; font-size: clamp(35px, 4.5vw, 75px); font-weight: 600; text-transform: uppercase; letter-spacing: -0.01em; }
+        .ticker:last-child .ticker-text { color: #fff; }
+        .ticker .accent { font-family: 'Caveat', cursive; font-weight: 400; font-size: 1.1em; text-transform: none; color: rgba(0,0,0,0.6); }
+        .ticker:last-child .accent { color: var(--gold); }
+
+        /* --- PILLARS --- */
+        .pillars-section { padding: 15vh 8vw; background: #ffffff; position: relative; z-index: 20; }
+        .pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 60px; }
+        .pillar-card { background: #f9f9f9; border: 1px solid #eee; padding: 50px 40px; position: relative; transition: all 0.5s ease; opacity: 0; transform: translateY(40px); }
+        .pillar-card:hover { background: #ffffff; border-color: var(--gold); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .pillar-card .number { font-family: 'Instrument Serif', serif; font-size: 4rem; color: var(--gold); opacity: 0.5; margin-bottom: 20px; display: block; }
+        .pillar-card h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 20px; color: #1a1a1a; letter-spacing: 1px; }
+
+        /* --- CONTACT (MOBILE FRIENDLY) --- */
+        #contact-section { background-color: var(--dark); min-height: 100vh; padding: 12vh 8vw; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 100; }
+        .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+        /* --- MENU OVERLAY (RESTORED HOVER LOGIC) --- */
+        .menu-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+            background: var(--dark-soft); display: flex; justify-content: center; 
+            align-items: center; z-index: 8500; clip-path: circle(0% at 93% 5%);
+        }
+        .menu-links { list-style: none; text-align: center; }
+        .menu-links li { margin: 25px 0; overflow: hidden; }
+        .menu-links a { 
+            display: inline-block; font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vh, 5rem); 
+            text-decoration: none; color: white; text-transform: uppercase; opacity: 0; transform: translateY(100%);
+            transition: color 0.4s ease; position: relative;
+        }
+        .menu-links a::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 1px;
+            background: var(--gold); transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1); transform: translateX(-50%);
+        }
+        .menu-links a:hover { color: var(--gold); }
+        .menu-links a:hover::after { width: 100%; }
+
+        @media (max-width: 992px) { 
+            .pillars-grid { grid-template-columns: 1fr; } 
+            .contact-container { grid-template-columns: 1fr; gap: 40px; }
+        }
+        @media (max-width: 768px) {
+            .cursor { display: none; }
+            .card { min-width: 70vw; height: 50vh; }
+            .pin-card { flex-direction: column; padding: 12vh 6vw; height: auto; }
+            .pin-card-content { width: 100%; }
+            #contact-section { padding: 8vh 6vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+
+    <div class="loader-wrapper">
+        <div class="loader-content">
+            <div class="loader-counter" id="count">00</div>
+            <div class="loader-line-bg"><div class="loader-line-progress" id="progress-bar"></div></div>
+            <div class="loader-brand">Ensijam Excellence</div>
+        </div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="logo">ENSIJAM</div>
+        <div class="menu-toggle" id="toggle">
+            <span class="menu-text" id="toggle-text">Menu</span>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="menu-overlay">
+        <ul class="menu-links">
+            <li><a href="#">Strategy</a></li>
+            <li><a href="#">Solutions</a></li>
+            <li><a href="#">Excellence</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+
+    <section class="hero">
+        <div class="hero-bg"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2070"></div>
+        <div class="hero-content">
+            <h1 id="title">Architecting <span class="title-highlight">Excellence</span><br>In The UAE</h1>
+        </div>
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <div class="marquee-item"><div class="marquee-dot"></div> STRATEGIC CONSULTING</div>
+                <div class="marquee-item"><div class="marquee-dot"></div> PREMIUM SOLUTIONS</div>
+                <div class="marquee-item"><div class="marquee-dot"></div> DUBAI</div>
+                <div class="marquee-item"><div class="marquee-dot"></div> ABU DHABI</div>
+                <div class="marquee-item"><div class="marquee-dot"></div> STRATEGIC CONSULTING</div>
+                <div class="marquee-item"><div class="marquee-dot"></div> PREMIUM SOLUTIONS</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="intro">
+        <div class="text-reveal-wrapper">
+            <div class="block-reveal">
+                <div class="block-reveal-box"></div>
+                <p>"We believe in the quiet power of ideas. The ones that sit with you long after you've looked away."</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="wrapper-404">
+        <h2 class="experiences-title">EXPERTICES</h2>
+        <div class="wrapper-404-inner">
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200">
+                <div class="card-overlay">
+                    <div class="card-number">01</div>
+                    <div class="block-reveal exp-reveal"><div class="block-reveal-box"></div><h3 class="card-title">STRATEGIC VISION</h3></div>
+                    <p class="card-description">Redefining corporate landscapes through calculated precision.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200">
+                <div class="card-overlay">
+                    <div class="card-number">02</div>
+                    <div class="block-reveal exp-reveal"><div class="block-reveal-box"></div><h3 class="card-title">OPERATIONAL DEPTH</h3></div>
+                    <p class="card-description">Executing complex business solutions with sustainable growth.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1200">
+                <div class="card-overlay">
+                    <div class="card-number">03</div>
+                    <div class="block-reveal exp-reveal"><div class="block-reveal-box"></div><h3 class="card-title">CULTURAL SYNERGY</h3></div>
+                    <p class="card-description">Bridging global standards with local heritage.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=1200">
+                <div class="card-overlay">
+                    <div class="card-number">04</div>
+                    <div class="block-reveal exp-reveal"><div class="block-reveal-box"></div><h3 class="card-title">FUTURE FORWARD</h3></div>
+                    <p class="card-description">Building tomorrow's business landscape today.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="pin-card-wrapper">
+        <section class="pin-card"><div class="overlay"></div><span>01/</span><div class="pin-card-content"><div class="block-reveal"><div class="block-reveal-box"></div><h2>STRATEGIC VISION</h2></div><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"><p class="card-desc">Tailored for the modern Middle East market.</p></div></section>
+        <section class="pin-card"><div class="overlay"></div><span>02/</span><div class="pin-card-content"><div class="block-reveal"><div class="block-reveal-box"></div><h2>OPERATIONAL DEPTH</h2></div><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200"><p class="card-desc">Focus on sustainable growth and efficiency.</p></div></section>
+         <section class="pin-card"><div class="overlay"></div><span>02/</span><div class="pin-card-content"><div class="block-reveal"><div class="block-reveal-box"></div><h2>OPERATIONAL DEPTH</h2></div><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200"><p class="card-desc">Focus on sustainable growth and efficiency.</p></div></section>
+          <section class="pin-card"><div class="overlay"></div><span>02/</span><div class="pin-card-content"><div class="block-reveal"><div class="block-reveal-box"></div><h2>OPERATIONAL DEPTH</h2></div><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200"><p class="card-desc">Focus on sustainable growth and efficiency.</p></div></section>
+    </div>
+
+    <div class="ticker-section">
+        <div class="ticker" data-duration="25"><div class="ticker-wrap"><div class="ticker-text">Let's collaborate • Reach out at <span class="accent">excellence@ensijam.ae</span> • Designing the <span class="accent">future of UAE business</span> • Premium Consulting •</div></div></div>
+        <div class="ticker" data-duration="15"><div class="ticker-wrap"><div class="ticker-text">Visionary Strategy <span class="accent">for Global Brands</span> • Operational <span class="accent">Excellence</span> • Building <span class="accent">Incredible</span> Legacies •</div></div></div>
+    </div>
+
+    <section class="pillars-section">
+        <div class="block-reveal" id="pillars-title"><div class="block-reveal-box"></div><h2 style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4rem); color: #1a1a1a;">OUR STRATEGIC <span style="font-style: italic; color: var(--gold);">PILLARS</span></h2></div>
+        <div class="pillars-grid">
+            <div class="pillar-card anim-pillar"><span class="number">I</span><h3>ADAPTIVE AGILITY</h3><p>Navigating GCC markets with modular strategies.</p></div>
+            <div class="pillar-card anim-pillar"><span class="number">II</span><h3>LUXURY PRECISION</h3><p>High-fashion rigor applied to corporate architecture.</p></div>
+            <div class="pillar-card anim-pillar"><span class="number">III</span><h3>ETERNAL LEGACY</h3><p>We build systems that sustain influence.</p></div>
+        </div>
+    </section>
+
+    <section id="contact-section">
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="block-reveal" id="contact-reveal-title" style="color: white;"><div class="block-reveal-box"></div><h2 style="font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; margin-bottom: 30px;">LET'S START <br><span style="font-style: italic; color: var(--gold);">THE DIALOGUE</span></h2></div>
+                <div class="contact-details" style="margin-top: 40px; color: #888;">
+                    <div class="detail-item" style="margin-bottom: 25px; overflow: hidden;"><p class="anim-up" style="color: var(--gold); letter-spacing: 3px; font-size: 0.75rem;">Headquarters</p><p class="anim-up" style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #fff;">Level 42, Emirates Towers<br>Dubai, UAE</p></div>
+                    <div class="detail-item" style="overflow: hidden;"><p class="anim-up" style="color: var(--gold); letter-spacing: 3px; font-size: 0.75rem;">Inquiries</p><p class="anim-up" style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #fff;">excellence@ensijam.ae</p></div>
+                </div>
+            </div>
+            <div class="contact-form-wrapper">
+                <form id="ensijam-form" style="display: flex; flex-direction: column; gap: 40px;">
+                    <div class="form-group"><input type="text" placeholder="FULL NAME" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 15px 0; color: #fff; outline: none;"></div>
+                    <div class="form-group"><input type="email" placeholder="EMAIL ADDRESS" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 15px 0; color: #fff; outline: none;"></div>
+                    <button class="submit-btn" type="button" style="border: 1px solid var(--gold); color: var(--gold); padding: 20px 40px; background: none; letter-spacing: 4px; cursor: pointer; width: fit-content;">SEND INQUIRY</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        const lenis = new Lenis();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+
+        // CURSOR
+        document.addEventListener('mousemove', (e) => { gsap.to('.cursor', { x: e.clientX - 10, y: e.clientY - 10, duration: 0.1 }); });
+
+        // LOADER
+        function runLoader() {
+            const tl = gsap.timeline();
+            const counter = { val: 0 };
+            tl.to(counter, { val: 100, duration: 2.5, ease: "power2.inOut", onUpdate: () => { document.getElementById('count').innerText = Math.floor(counter.val).toString().padStart(2, '0'); }});
+            tl.to("#progress-bar", { width: "100%", duration: 2.5, ease: "power2.inOut" }, 0);
+            tl.to(".loader-wrapper", { yPercent: -100, duration: 1.2, ease: "power4.inOut" })
+              .to("nav", { opacity: 1, duration: 1 }, "-=0.5")
+              .from("#title", { y: 80, opacity: 0, duration: 1.5 }, "-=0.8")
+              .to(".marquee-container", { opacity: 1, duration: 1 }, "-=1.2");
+        }
+        window.onload = runLoader;
+
+        // BLOCK REVEAL CORE
+        function initBlockReveal(selector, trigger, repeat = false) {
+            gsap.timeline({
+                scrollTrigger: { trigger: trigger, start: "top 80%", toggleActions: repeat ? "play none none reverse" : "play none none none" }
+            })
+            .to(selector, { opacity: 1, y: 0, duration: 0.1 })
+            .to(`${selector} .block-reveal-box`, { scaleX: 1, duration: 0.6, ease: "power2.inOut" })
+            .set(`${selector} h2, ${selector} p, ${selector} h3`, { opacity: 1 }) 
+            .to(`${selector} .block-reveal-box`, { scaleX: 0, transformOrigin: "right", duration: 0.6, ease: "power2.inOut" });
+        }
+        initBlockReveal(".intro .block-reveal", ".intro", true);
+
+        // HORIZONTAL SCROLL
+        const hSection = document.querySelector('.wrapper-404');
+        const hInner = document.querySelector('.wrapper-404-inner');
+        const hCards = document.querySelectorAll('.wrapper-404 .card');
+        let totalW = 0;
+        hCards.forEach(c => { totalW += c.offsetWidth; });
+        totalW += (hCards.length - 1) * (window.innerWidth * 0.08) + (window.innerWidth * 0.1);
+
+        const mainHScroll = gsap.to(hInner, {
+            x: () => -(totalW - window.innerWidth + window.innerWidth * 0.2),
+            ease: "none",
+            scrollTrigger: { trigger: hSection, start: "top top", end: () => "+=" + totalW, scrub: 1, pin: true, invalidateOnRefresh: true }
+        });
+
+        // REPEATING HORIZONTAL REVEALS
+        gsap.utils.toArray(".exp-reveal").forEach((reveal) => {
+            gsap.timeline({
+                scrollTrigger: { trigger: reveal, containerAnimation: mainHScroll, start: "left 85%", toggleActions: "play none none reverse" }
+            })
+            .to(reveal, { opacity: 1, duration: 0.1 })
+            .to(reveal.querySelector(".block-reveal-box"), { scaleX: 1, duration: 0.5, ease: "power2.inOut" })
+            .set(reveal.querySelector("h3"), { opacity: 1 })
+            .to(reveal.querySelector(".block-reveal-box"), { scaleX: 0, transformOrigin: "right", duration: 0.5, ease: "power2.inOut" });
+        });
+
+        // STACKING CARDS
+        const pinCards = gsap.utils.toArray(".pin-card");
+        pinCards.forEach((card, i) => {
+            initBlockReveal(`.pin-card:nth-child(${i+1}) .block-reveal`, card, true);
+            if(i < pinCards.length - 1) {
+                ScrollTrigger.create({ trigger: card, start: "top top", endTrigger: ".pin-card-wrapper", end: "bottom bottom", pin: true, pinSpacing: false });
+                ScrollTrigger.create({
+                    trigger: pinCards[i + 1], start: "top bottom", end: "top top", scrub: true,
+                    onUpdate: (self) => { gsap.set(card, { scale: 1 - self.progress * 0.05, y: -self.progress * 20 }); gsap.set(card.querySelector(".overlay"), { opacity: self.progress * 0.4 }); }
+                });
+            }
+        });
+
+        // TICKER (RESTORED -33.33% LOGIC)
+        document.querySelectorAll('.ticker').forEach(ticker => {
+            const inner = ticker.querySelector('.ticker-wrap');
+            const content = inner.querySelector('.ticker-text');
+            inner.append(content.cloneNode(true)); inner.append(content.cloneNode(true));
+            gsap.to(inner, { xPercent: -33.33, repeat: -1, duration: ticker.getAttribute('data-duration'), ease: 'linear' });
+        });
+
+        // MENU LOGIC (RESTORED HOVER & CLIPPATH)
+        const toggle = document.getElementById('toggle');
+        const toggleText = document.getElementById('toggle-text');
+        const overlay = document.querySelector('.menu-overlay');
+        const menuLinks = document.querySelectorAll('.menu-links a');
+        let isOpen = false;
+
+        toggle.addEventListener('click', () => {
+            isOpen = !isOpen;
+            toggle.classList.toggle('is-active');
+            toggleText.innerText = isOpen ? "Cancel" : "Menu";
+            gsap.to(overlay, { clipPath: isOpen ? "circle(150% at 93% 5%)" : "circle(0% at 93% 5%)", duration: 1, ease: "power3.inOut" });
+            gsap.to(menuLinks, { opacity: isOpen ? 1 : 0, y: isOpen ? "0%" : "100%", stagger: isOpen ? 0.1 : -0.1, duration: 0.6, delay: isOpen ? 0.4 : 0 });
+        });
+
+        menuLinks.forEach(link => {
+            link.addEventListener('mousemove', (e) => {
+                const rect = link.getBoundingClientRect();
+                gsap.to(link, { x: (e.clientX - rect.left - rect.width/2) * 0.3, y: (e.clientY - rect.top - rect.height/2) * 0.3, duration: 0.3 });
+            });
+            link.addEventListener('mouseleave', () => { gsap.to(link, { x: 0, y: 0, duration: 0.3 }); });
+        });
+
+        initBlockReveal("#pillars-title", ".pillars-section", true);
+        gsap.to(".anim-pillar", { scrollTrigger: { trigger: ".pillars-grid", start: "top 85%" }, y: 0, opacity: 1, stagger: 0.2, duration: 1 });
+        initBlockReveal("#contact-reveal-title", "#contact-section", true);
+        gsap.timeline({ scrollTrigger: { trigger: "#contact-section", start: "top 60%" } }).from("#contact-section .anim-up", { y: 60, opacity: 0, stagger: 0.1, duration: 1, delay: 0.5 });
+    </script>
+</body>
+</html>
