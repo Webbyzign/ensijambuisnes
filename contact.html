@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | ENSIJAM Excellence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@200;300;400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #C9A962;
+            --dark: #0A0A0A;
+            --white: #ffffff;
+            --transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body {
+            background-color: var(--dark);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* --- UI ELEMENTS --- */
+        .cursor { width: 12px; height: 12px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; mix-blend-mode: difference; }
+
+        nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 2.5rem 5%; z-index: 9600; mix-blend-mode: difference; }
+        .logo { font-weight: 300; font-size: 1.1rem; letter-spacing: 8px; text-transform: uppercase; color: white; text-decoration: none; }
+        .nav-link { color: white; text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; }
+
+        /* --- CONTACT CONTENT --- */
+        .contact-hero { height: 100vh; width: 100%; display: flex; align-items: center; padding: 0 8vw; position: relative; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Playfair Display', serif; font-size: 25vw; color: var(--gold); opacity: 0.02; white-space: nowrap; pointer-events: none; z-index: 1; }
+
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10vw; width: 100%; position: relative; z-index: 5; }
+
+        .block-rev { position: relative; overflow: hidden; display: block; width: fit-content; }
+        .block-rev-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; z-index: 2; }
+        .block-rev-text { opacity: 0; transform: translateY(20px); display: block; }
+
+        .contact-info h1 { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1; margin-bottom: 40px; }
+        .contact-info h1 span { font-style: italic; color: var(--gold); }
+        
+        .detail-group { margin-bottom: 50px; }
+        .detail-label { font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 15px; display: block; }
+        .detail-value { font-family: 'Playfair Display', serif; font-size: 1.5rem; text-decoration: none; color: var(--white); display: block; transition: var(--transition); }
+
+        /* --- LUXURY FORM --- */
+        .contact-form { display: flex; flex-direction: column; gap: 40px; }
+        .input-group { position: relative; width: 100%; }
+        .input-group input, .input-group textarea {
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 0; color: var(--white); font-family: 'Montserrat', sans-serif; font-size: 0.9rem;
+            outline: none; transition: var(--transition);
+        }
+        .input-group label { position: absolute; top: 15px; left: 0; font-size: 0.65rem; letter-spacing: 3px; color: #555; text-transform: uppercase; pointer-events: none; transition: var(--transition); }
+        
+        .input-group input:focus ~ label, .input-group input:valid ~ label,
+        .input-group textarea:focus ~ label, .input-group textarea:valid ~ label {
+            top: -10px; font-size: 0.5rem; color: var(--gold);
+        }
+        .input-group input:focus, .input-group textarea:focus { border-bottom: 1px solid var(--gold); }
+
+        .submit-btn {
+            background: transparent; border: 1px solid var(--gold); color: var(--gold);
+            padding: 25px 60px; font-size: 0.7rem; letter-spacing: 5px; text-transform: uppercase;
+            cursor: pointer; width: fit-content; transition: var(--transition); margin-top: 20px;
+        }
+        .submit-btn:hover { background: var(--gold); color: var(--dark); transform: translateY(-5px); }
+
+        /* --- SUCCESS POPUP --- */
+        .success-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10000; opacity: 0; pointer-events: none; backdrop-filter: blur(20px);
+        }
+        .success-modal {
+            text-align: center; max-width: 500px; padding: 60px;
+            border: 1px solid rgba(201,169,98,0.2); background: #0c0c0c;
+        }
+        .success-modal h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--gold); margin-bottom: 20px; }
+        .success-modal p { font-size: 0.8rem; letter-spacing: 2px; color: #888; text-transform: uppercase; line-height: 2; }
+
+        @media (max-width: 992px) {
+            .contact-hero { height: auto; padding: 15vh 8vw; }
+            .contact-grid { grid-template-columns: 1fr; gap: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+
+    <div class="success-overlay" id="successPopup">
+        <div class="success-modal">
+            <h2>Connection Initialized</h2>
+            <p>Your request has been encrypted and sent to our advisors. A private briefing will be scheduled shortly.</p>
+        </div>
+    </div>
+
+    <nav>
+        <a href="index.html" class="logo">ENSIJAM</a>
+        <a href="index.html" class="nav-link">Home</a>
+    </nav>
+
+    <main class="contact-hero" style="margin-top: 50px;">
+        <div class="watermark">CONTACT</div>
+
+        <div class="contact-grid">
+            <div class="contact-info">
+                <div class="block-rev">
+                    <div class="block-rev-box"></div>
+                    <h1 class="block-rev-text">Request a <br><span>Private Briefing.</span></h1>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label">Headquarters</span>
+                    <div class="block-rev">
+                        <div class="block-rev-box"></div>
+                        <span class="block-rev-text detail-value">Emirates Towers, Level 42<br>Dubai, UAE</span>
+                    </div>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label">Direct Inquiries</span>
+                    <div class="block-rev">
+                        <div class="block-rev-box"></div>
+                        <a href="mailto:excellence@ensijam.ae" class="block-rev-text detail-value">excellence@ensijam.ae</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-wrapper">
+                <form class="contact-form" id="contactForm">
+                    <div class="input-group">
+                        <input type="text" id="userName" required>
+                        <label>Full Name</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" required>
+                        <label>Email Address</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" required>
+                        <label>Organization</label>
+                    </div>
+                    <div class="input-group">
+                        <textarea rows="4" required></textarea>
+                        <label>Briefly state your requirements</label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Send Inquiry</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        const lenis = new Lenis();
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.to('.cursor', { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
+
+        // Repeating Block Reveal
+        function initBlockReveals() {
+            document.querySelectorAll('.block-rev').forEach(rev => {
+                const box = rev.querySelector('.block-rev-box');
+                const text = rev.querySelector('.block-rev-text');
+                
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: rev,
+                        start: "top 95%",
+                        toggleActions: "play reverse play reverse"
+                    }
+                })
+                .to(box, { scaleX: 1, duration: 0.6, ease: "power2.inOut" })
+                .set(text, { opacity: 1, y: 0 })
+                .to(box, { scaleX: 0, transformOrigin: "right", duration: 0.6, ease: "power2.inOut" });
+            });
+        }
+
+        // Form Submission Logic
+        const form = document.getElementById('contactForm');
+        const successPopup = document.getElementById('successPopup');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // GSAP Entrance for Success Modal
+            gsap.to(successPopup, { 
+                opacity: 1, 
+                pointerEvents: 'all', 
+                duration: 0.8, 
+                ease: 'power4.out' 
+            });
+
+            // Refresh page after 4 seconds
+            setTimeout(() => {
+                location.reload();
+            }, 4000);
+        });
+
+        window.onload = initBlockReveals;
+    </script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | ENSIJAM Excellence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@200;300;400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #C9A962;
+            --dark: #0A0A0A;
+            --white: #ffffff;
+            --transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body {
+            background-color: var(--dark);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        .cursor { width: 12px; height: 12px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; mix-blend-mode: difference; }
+
+        nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 2.5rem 5%; z-index: 9600; mix-blend-mode: difference; }
+        .logo { font-weight: 300; font-size: 1.1rem; letter-spacing: 8px; text-transform: uppercase; color: white; text-decoration: none; }
+        .nav-link { color: white; text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; }
+
+        /* --- ABOUT HERO --- */
+        .abt-hero { height: 100vh; display: flex; align-items: center; padding: 0 5%; gap: 5%; }
+        .abt-hero-text { flex: 1; z-index: 5; }
+        .abt-hero-image { flex: 1; height: 80vh; overflow: hidden; position: relative; }
+        .abt-hero-image img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
+        
+        .hero-label { font-size: 0.65rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; display: block; }
+        .abt-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 5.5rem); line-height: 1.1; font-weight: 400; }
+        .abt-hero h1 span { font-style: italic; color: var(--gold); }
+
+        /* --- BLOCK REVEAL --- */
+        .block-rev { position: relative; overflow: hidden; display: block; width: fit-content; }
+        .block-rev-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; z-index: 2; }
+        .block-rev-text { opacity: 0; transform: translateY(20px); display: block; }
+
+        /* --- TEXT IMAGE REVEAL SECTION (NEW) --- */
+        .reveal-container { width: 100vw; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10vh 0; background: #0c0c0c; }
+        .reveal-line { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 10px; }
+        .reveal-line span { 
+            font-family: 'Playfair Display', serif; 
+            font-size: clamp(2rem, 7vw, 6rem); 
+            font-weight: 400; 
+            letter-spacing: -2px; 
+            color: var(--white);
+        }
+        .img-span { height: clamp(50px, 8vw, 100px); width: 0; border-radius: 5px; overflow: hidden; position: relative; display: inline-block; }
+        .reveal-line img { height: 100%; width: 300px; position: absolute; left: 50%; transform: translateX(-50%); object-fit: cover; }
+
+        /* --- PHILOSOPHY --- */
+        .philosophy { padding: 20vh 10%; background: var(--white); color: var(--dark); display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .philosophy h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem); max-width: 900px; margin-bottom: 40px; font-weight: 500; line-height: 1.3; }
+        .philosophy p { font-size: 1.1rem; line-height: 2; color: #555; max-width: 700px; }
+
+        /* --- STAGGERED NARRATIVE --- */
+        .narrative { padding: 15vh 8vw; background: #fdfcf9; color: var(--dark); }
+        .narrative-row { display: flex; align-items: center; gap: 10vw; margin-bottom: 20vh; }
+        .narrative-row:nth-child(even) { flex-direction: row-reverse; }
+        .narrative-img { flex: 1; height: 60vh; overflow: hidden; }
+        .narrative-img img { width: 100%; height: 100%; object-fit: cover; }
+        .narrative-content { flex: 1; }
+        .narrative-content h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 30px; }
+        .narrative-content p { color: #666; font-size: 1rem; line-height: 1.8; }
+
+        /* --- TEAM --- */
+        .team { padding: 15vh 8vw; background: var(--dark); }
+        .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 10vh; }
+        .member { position: relative; cursor: pointer; }
+        .member-img { height: 60vh; overflow: hidden; filter: grayscale(100%); transition: var(--transition); margin-bottom: 25px; }
+        .member:hover .member-img { filter: grayscale(0%); }
+        .member img { width: 100%; height: 100%; object-fit: cover; }
+        .member-info h4 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); }
+        .member-info p { color: var(--gold); font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 5px; }
+
+        /* --- FOOTER --- */
+        .abt-footer { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%); }
+        .cta-gold { padding: 25px 60px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; letter-spacing: 6px; font-size: 0.7rem; transition: var(--transition); }
+        .cta-gold:hover { background: var(--gold); color: var(--dark); }
+
+        @media (max-width: 992px) {
+            .abt-hero, .narrative-row { flex-direction: column; height: auto; padding-top: 15vh; }
+            .team-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+
+    <nav>
+        <a href="index.html" class="logo">ENSIJAM</a>
+        <a href="index.html" class="nav-link">Home</a>
+    </nav>
+
+    <header class="abt-hero">
+        <div class="abt-hero-text">
+            <span class="hero-label"><div class="block-rev"><div class="block-rev-box"></div><span class="block-rev-text">Our Identity</span></div></span>
+            <h1>
+                <div class="block-rev"><div class="block-rev-box"></div><span class="block-rev-text">Architects of <span>Influence</span></span></div>
+                <div class="block-rev"><div class="block-rev-box"></div><span class="block-rev-text">& Silent Growth.</span></div>
+            </h1>
+        </div>
+        <div class="abt-hero-image" style="margin-top: 50px;">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" alt="About Ensijam">
+        </div>
+    </header>
+
+    <section class="reveal-container">
+        <div class="reveal-line">
+            <span>We craft</span>
+            <span class="img-span">
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1200"alt="">
+            </span>
+            <span>digital</span>
+        </div>
+        <div class="reveal-line">
+            <span>experiences</span>
+            <span class="img-span">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2070" alt="">
+            </span>
+            <span>that</span>
+        </div>
+        <div class="reveal-line">
+            <span>inspire</span>
+            <span class="img-span">
+                <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1200" alt="">
+            </span>
+            <span>and move</span>
+        </div>
+        <div class="reveal-line">
+            <span>people</span>
+            <span class="img-span">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" alt="">
+            </span>
+            <span>forward.</span>
+        </div>
+    </section>
+
+    <section class="philosophy">
+        <div class="block-rev"><div class="block-rev-box"></div><h2 class="block-rev-text">"Excellence is not an act, but a habit of precision within the UAE's unique landscape."</h2></div>
+        <p>Ensijam was founded on the principle that modern business requires more than just strategy.</p>
+    </section>
+
+    <section class="narrative">
+        <div class="narrative-row">
+            <div class="narrative-img"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200"></div>
+            <div class="narrative-content">
+                <div class="block-rev"><div class="block-rev-box"></div><h3 class="block-rev-text">The Origin</h3></div>
+                <p>Born in the heart of Dubai, Ensijam Excellence began as a private advisory for family offices.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="team">
+        <div class="block-rev" style="margin: 0 auto;"><div class="block-rev-box"></div><h2 class="block-rev-text" style="font-family: 'Playfair Display', serif; font-size: 3rem; text-align: center;">The <span>Partners</span></h2></div>
+        <div class="team-grid">
+            <div class="member">
+                <div class="member-img"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800"></div>
+                <div class="member-info"><h4>Marcus Al-Hussain</h4><p>Managing Director</p></div>
+            </div>
+            <div class="member">
+                <div class="member-img"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"></div>
+                <div class="member-info"><h4>Sarah Sterling</h4><p>Head of Strategy</p></div>
+            </div>
+            <div class="member">
+                <div class="member-img"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800"></div>
+                <div class="member-info"><h4>David Chen</h4><p>Operational Architecture</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="abt-footer">
+        <div class="block-rev" style="margin-bottom: 50px;">
+            <div class="block-rev-box"></div>
+            <h2 class="block-rev-text" style="font-family: 'Playfair Display', serif; font-size: 3.5rem;">Begin Your Legacy.</h2>
+        </div>
+        <a href="#" class="cta-gold">CONTACT THE ADVISORS</a>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        
+        const lenis = new Lenis();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.to('.cursor', { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
+
+        function initAnimations() {
+            // Block Reveals (Repeating)
+            document.querySelectorAll('.block-rev').forEach(rev => {
+                const box = rev.querySelector('.block-rev-box');
+                const text = rev.querySelector('.block-rev-text');
+                
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: rev,
+                        start: "top 90%",
+                        toggleActions: "play reverse play reverse"
+                    }
+                })
+                .to(box, { scaleX: 1, duration: 0.6, ease: "power2.inOut" })
+                .set(text, { opacity: 1, y: 0 })
+                .to(box, { scaleX: 0, transformOrigin: "right", duration: 0.6, ease: "power2.inOut" });
+            });
+
+            // Text-Image Reveal Logic (NEW)
+            document.querySelectorAll('.reveal-line').forEach((line) => {
+                const imgSpan = line.querySelector('.img-span');
+                if (imgSpan) {
+                    gsap.to(imgSpan, {
+                        width: 300,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: line,
+                            start: "top 90%",
+                            end: "top 40%",
+                            scrub: 1,
+                        }
+                    });
+                }
+            });
+        }
+
+        window.onload = initAnimations;
+    </script>
+</body>
+</html>

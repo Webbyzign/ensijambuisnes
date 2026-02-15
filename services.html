@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | ENSIJAM Excellence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@200;300;400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #C9A962;
+            --gold-light: #E6D5AC;
+            --dark: #0A0A0A;
+            --dark-soft: #141414;
+            --white: #ffffff;
+            --transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body {
+            background-color: var(--dark);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- UI ELEMENTS --- */
+        .cursor { width: 12px; height: 12px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; mix-blend-mode: difference; }
+        
+        nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 2.5rem 5%; z-index: 9600; mix-blend-mode: difference; }
+        .logo { font-weight: 300; font-size: 1.1rem; letter-spacing: 8px; text-transform: uppercase; color: white; text-decoration: none; }
+        .nav-link { color: white; text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; position: relative; }
+        .nav-link::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0%; height: 1px; background: var(--gold); transition: var(--transition); }
+        .nav-link:hover::after { width: 100%; }
+
+        /* --- HERO --- */
+        .srv-hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 8vw; background: radial-gradient(circle at 70% 30%, #1a1a1a 0%, #0a0a0a 100%); }
+        .hero-sub { font-size: 0.7rem; letter-spacing: 6px; text-transform: uppercase; color: var(--gold); margin-bottom: 30px; display: block; }
+        .srv-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 8vw, 7rem); line-height: 1; font-weight: 400; }
+        .srv-hero h1 span { font-style: italic; color: var(--gold); }
+
+        /* --- BLOCK REVEAL CORE --- */
+        .block-rev { position: relative; overflow: hidden; display: block; width: fit-content; }
+        .block-rev-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; z-index: 2; }
+        .block-rev-text { opacity: 0; transform: translateY(20px); display: block; }
+
+        /* --- HORIZONTAL SCROLL EXPERTISE --- */
+        .h-scroll-container { background: #fdfcf9; color: var(--dark); padding: 15vh 0; }
+        .h-scroll-wrapper { display: flex; padding-left: 8vw; gap: 4vw; will-change: transform; }
+        .h-card { min-width: 45vw; height: 65vh; position: relative; overflow: hidden; border-radius: 2px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .h-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) brightness(0.8); transition: var(--transition); }
+        .h-card:hover img { filter: grayscale(0%) brightness(0.9); transform: scale(1.05); }
+        .h-card-content { position: absolute; bottom: 40px; left: 40px; color: var(--white); z-index: 3; }
+        .h-card-num { font-family: 'Instrument Serif', serif; font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; display: block; }
+        .h-card h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; }
+
+        /* --- MARQUEE --- */
+        .marquee { padding: 50px 0; background: var(--dark); border-top: 1px solid rgba(201,169,98,0.2); border-bottom: 1px solid rgba(201,169,98,0.2); overflow: hidden; }
+        .marquee-inner { display: flex; white-space: nowrap; gap: 50px; }
+        .marquee-item { font-family: 'Instrument Serif', serif; font-size: 4rem; font-style: italic; color: var(--gold); opacity: 0.6; }
+
+        /* --- BENTO SERVICES --- */
+        .bento-section { padding: 15vh 8vw; background: var(--white); color: var(--dark); }
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 30px; margin-top: 8vh; }
+        .bento-item { background: #f8f8f8; padding: 60px 40px; border: 1px solid #eee; transition: var(--transition); }
+        .bento-item:hover { background: var(--dark); color: var(--white); }
+        .bento-item.large { grid-column: span 8; }
+        .bento-item.small { grid-column: span 4; }
+        .bento-item h3 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px; }
+        .bento-item p { font-size: 0.9rem; color: #666; max-width: 400px; }
+        .bento-item:hover p { color: #aaa; }
+
+        /* --- LUXURY BRIEFING FOOTER --- */
+        .srv-footer { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--dark); position: relative; overflow: hidden; }
+        .footer-bg-text { position: absolute; font-family: 'Playfair Display', serif; font-size: 20vw; color: var(--gold); opacity: 0.03; white-space: nowrap; pointer-events: none; }
+        
+        .briefing-box { 
+            width: 80%; max-width: 1000px; padding: 100px 50px; text-align: center;
+            border: 1px solid rgba(201,169,98,0.1); background: rgba(255,255,255,0.01);
+            backdrop-filter: blur(25px); position: relative; z-index: 10;
+        }
+        .cta-gold { 
+            margin-top: 40px; padding: 25px 60px; border: 1px solid var(--gold); color: var(--gold); 
+            text-decoration: none; letter-spacing: 8px; font-size: 0.75rem;
+            transition: var(--transition); display: inline-block;
+        }
+        .cta-gold:hover { background: var(--gold); color: var(--dark); transform: scale(1.05); }
+
+        @media (max-width: 992px) {
+            .h-card { min-width: 75vw; }
+            .bento-item.large, .bento-item.small { grid-column: span 12; }
+            .briefing-box { width: 90%; padding: 60px 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+
+    <nav>
+        <a href="index.html" class="logo">ENSIJAM</a>
+        <a href="index.html" class="nav-link">Back to Home</a>
+    </nav>
+
+    <header class="srv-hero">
+        <span class="hero-sub"><div class="block-rev"><div class="block-rev-box"></div><span class="block-rev-text">Established Excellence</span></div></span>
+        <h1>
+            <div class="block-rev"><div class="block-rev-box"></div><span class="block-rev-text">Bespoke <span>Strategies</span></span></div>
+            <div class="block-rev"><div class="block-rev-box"></div><span class="block-rev-text">For Global Legacies.</span></div>
+        </h1>
+    </header>
+
+    <section class="h-scroll-container">
+        <div class="block-rev" style="margin-left: 8vw; margin-bottom: 5vh;">
+            <div class="block-rev-box"></div>
+            <h2 class="block-rev-text" style="font-family: 'Playfair Display', serif; font-size: 3rem;">Core Expertise</h2>
+        </div>
+        
+        <div class="h-scroll-wrapper">
+            <div class="h-card">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200">
+                <div class="h-card-content">
+                    <span class="h-card-num">01</span>
+                    <div class="block-rev"><div class="block-rev-box"></div><h3 class="block-rev-text">Market Entry</h3></div>
+                </div>
+            </div>
+            <div class="h-card">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200">
+                <div class="h-card-content">
+                    <span class="h-card-num">02</span>
+                    <div class="block-rev"><div class="block-rev-box"></div><h3 class="block-rev-text">Operational Depth</h3></div>
+                </div>
+            </div>
+            <div class="h-card">
+                <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200">
+                <div class="h-card-content">
+                    <span class="h-card-num">03</span>
+                    <div class="block-rev"><div class="block-rev-box"></div><h3 class="block-rev-text">Strategic Vision</h3></div>
+                </div>
+            </div>
+            <div class="h-card">
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1200">
+                <div class="h-card-content">
+                    <span class="h-card-num">04</span>
+                    <div class="block-rev"><div class="block-rev-box"></div><h3 class="block-rev-text">Cultural Synergy</h3></div>
+                </div>
+            </div>
+            <div class="h-card">
+                <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1200">
+                <div class="h-card-content">
+                    <span class="h-card-num">05</span>
+                    <div class="block-rev"><div class="block-rev-box"></div><h3 class="block-rev-text">Corporate Diplomacy</h3></div>
+                </div>
+            </div>
+            <div class="h-card">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200">
+              
+                <div class="h-card-content">
+                    <span class="h-card-num">06</span>
+                    <div class="block-rev"><div class="block-rev-box"></div><h3 class="block-rev-text">Legacy Preservation</h3></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="marquee">
+        <div class="marquee-inner">
+            <div class="marquee-item">DISCRETION • PRECISION • LEGACY • DISCRETION • PRECISION • LEGACY •</div>
+            <div class="marquee-item">DISCRETION • PRECISION • LEGACY • DISCRETION • PRECISION • LEGACY •</div>
+        </div>
+    </div>
+
+    <section class="bento-section">
+        <div class="block-rev"><div class="block-rev-box"></div><h2 class="block-rev-text" style="font-family: 'Playfair Display', serif; font-size: 3rem;">Tailored Solutions</h2></div>
+        
+        <div class="bento-grid">
+            <div class="bento-item large">
+                <span class="h-card-num">I</span>
+                <h3>Regional Dynamics</h3>
+                <p>Navigating GCC markets requires absolute cultural and regulatory precision. We provide the bridge between global ambition and local nuance.</p>
+            </div>
+            <div class="bento-item small">
+                <span class="h-card-num">II</span>
+                <h3>Adaptive Agility</h3>
+                <p>Modular strategies designed for a rapidly evolving economic landscape.</p>
+            </div>
+            <div class="bento-item small">
+                <span class="h-card-num">III</span>
+                <h3>Elite Compliance</h3>
+                <p>Ensuring your operations meet the highest standards of international and local governance.</p>
+            </div>
+            <div class="bento-item large">
+                <span class="h-card-num">IV</span>
+                <h3>Private Client Advisory</h3>
+                <p>Confidential consultation for family offices and private equity entities seeking regional expansion and stability.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="srv-footer">
+        <div class="footer-bg-text">ENSIJAM</div>
+        <div class="briefing-box">
+            <div class="block-rev" style="margin: 0 auto 30px auto;">
+                <div class="block-rev-box"></div>
+                <h2 class="block-rev-text" style="font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem);">The Future <span style="color: var(--gold); font-style: italic;">Awaits</span>.</h2>
+            </div>
+            <p style="color: #888; letter-spacing: 5px; text-transform: uppercase; font-size: 0.7rem;">Strictly Confidential Private Briefings</p>
+            <a href="#" class="cta-gold">REQUEST PRIVATE ACCESS</a>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const lenis = new Lenis();
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+
+        // Cursor
+        document.addEventListener('mousemove', (e) => {
+            gsap.to('.cursor', { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
+
+        // Horizontal Scroll Setup
+        const hWrapper = document.querySelector('.h-scroll-wrapper');
+        const hScroll = gsap.to(hWrapper, {
+            x: () => -(hWrapper.scrollWidth - window.innerWidth + window.innerWidth * 0.1),
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".h-scroll-container",
+                start: "top top",
+                end: () => "+=" + hWrapper.scrollWidth,
+                scrub: 1,
+                pin: true,
+                invalidateOnRefresh: true
+            }
+        });
+
+        // Block Reveal Function
+        function initBlockReveals() {
+            document.querySelectorAll('.block-rev').forEach(rev => {
+                const box = rev.querySelector('.block-rev-box');
+                const text = rev.querySelector('.block-rev-text');
+                
+                // Special check for blocks inside horizontal scroll
+                const isHorizontal = rev.closest('.h-scroll-wrapper');
+                
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: rev,
+                        containerAnimation: isHorizontal ? hScroll : null,
+                        start: isHorizontal ? "left 90%" : "top 85%",
+                        toggleActions: "play none none none"
+                    }
+                })
+                .to(box, { scaleX: 1, duration: 0.6, ease: "power2.inOut" })
+                .set(text, { opacity: 1, y: 0 })
+                .to(box, { scaleX: 0, transformOrigin: "right", duration: 0.6, ease: "power2.inOut" });
+            });
+        }
+
+        // Marquee
+        gsap.to(".marquee-inner", {
+            xPercent: -50,
+            repeat: -1,
+            duration: 25,
+            ease: "linear"
+        });
+
+        window.onload = () => {
+            initBlockReveals();
+        };
+    </script>
+</body>
+</html>
